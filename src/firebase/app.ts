@@ -5,7 +5,6 @@ import {
   logEvent,
   setUserId,
 } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -19,20 +18,17 @@ const firebaseConfig = {
 
 let analytics: ReturnType<typeof getAnalytics> | null = null;
 
-const createFirebaseApp = () => {
+export const createFirebaseApp = () => {
   let app: FirebaseApp;
-  if (getApps().length === 0) {
+  if (getApps().length <= 0) {
     app = initializeApp(firebaseConfig);
   } else {
     app = getApp();
   }
-  isSupported().then((isValid) => {
-    analytics = isValid ? getAnalytics(app) : null;
-  });
+  // isSupported().then((isValid) => {
+  //   analytics = isValid ? getAnalytics(app) : null;
+  // });
   return app;
 };
 
-const app = createFirebaseApp();
-const auth = getAuth(app);
-
-export { auth, analytics, logEvent, isSupported, setUserId };
+export { analytics, logEvent, isSupported, setUserId };

@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { phoneLogin, recaptchaVerifier } from "@/firebase/auth";
+import { phoneLogin, recaptchaVerifier } from "@/firebase/client";
 import { ApplicationVerifier, ConfirmationResult } from "firebase/auth";
 import useFirebaseAuth from "@/hooks/auth";
 
 const PhoneOnboarding = () => {
-  const { user, isLoading: userLoading, auth } = useFirebaseAuth();
+  const { user, isLoading: userLoading } = useFirebaseAuth();
   const [page, setPage] = useState(0);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -27,7 +27,7 @@ const PhoneOnboarding = () => {
     const v = recaptchaVerifier();
     setVerifier(v);
     return () => v?.clear();
-  }, [auth]);
+  }, [user?.phoneNumber]);
 
   useEffect(() => {
     if (user?.phoneNumber) {

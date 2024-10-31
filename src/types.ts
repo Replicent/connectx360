@@ -6,3 +6,13 @@ export type UserContextType = {
   logOut: () => Promise<void>;
   dbUser: string | null;
 };
+
+export type UserRoles = "ADMIN" | "USER" | "CLIENT";
+
+export type UserType = {
+  firebaseid: string;
+  phone: string;
+  role: UserRoles;
+  name?: string;
+  email?: string;
+};
