@@ -1,18 +1,16 @@
-import qs from "querystring";
 import Debug from "debug";
-import { NextApiRequest } from "next";
-import admin, { credential } from "firebase-admin";
-import { getApps, initializeApp } from "firebase-admin/app";
+import firebaseAdmin, { credential } from "firebase-admin";
 import { getLogger } from "@/utils/app-utils";
-import { getUserByFirebaseId } from "@/db/ops/user";
+import { getUserByFirebaseId } from "@/db/users";
+import { cookies } from "next/headers";
+import { getApps, initializeApp } from "firebase-admin/app";
 
 const debug = Debug("src:middleware:firebase: ");
 const logger = getLogger();
 
-const serviceAccountKey = process.env
-  .NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY as string;
+const FIREBASE_SERVICE_ACCOUNT_KEY = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-const serviceAccount = JSON.parse(serviceAccountKey);
+const serviceAccount = JSON.parse(FIREBASE_SERVICE_ACCOUNT_KEY as string);
 
 if (getApps().length <= 0) {
   initializeApp({
@@ -20,32 +18,19 @@ if (getApps().length <= 0) {
   });
 }
 
-export function getAccesstoken(req: NextApiRequest): string | null {
-  let token = req.headers.accesstoken;
-  if (!token) {
-    const filteredCookie = req.headers.cookie
-      ?.split(";")
-      ?.filter((val: string) => val.split("=")[0].match("token"))[0]
-      ?.trim();
-    const cookies = qs.decode(filteredCookie ?? "");
-    if (cookies && cookies.token) {
-      token = cookies.token as string;
-    }
-  }
-  debug({ token });
-  return token && typeof token === "string" ? token : null;
-}
-
-export async function getLoggedInUser(req: NextApiRequest) {
-  const token = getAccesstoken(req);
-  if (!token) return null;
+export async function getLoggedInUser() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token");
+  const tokenValue = token?.value as string;
   try {
-    const firebaseUser = await admin.auth().verifyIdToken(token);
+    const firebaseUser = await firebaseAdmin
+      .auth()
+      .verifyIdToken(tokenValue as string);
     debug({ firebaseUser });
     return firebaseUser;
-  } catch (error) {
-    logger.error({ error });
-    throw error;
+  } catch (getLoggedInUserError) {
+    logger.error({ getLoggedInUserError });
+    throw getLoggedInUserError;
   }
 }
 
@@ -61,10 +46,12 @@ export async function createFirebaseUser(phone: string): Promise<string> {
     throw new Error("Invalid phone number");
   }
   try {
-    const firebaseUserFind = await admin.auth().getUserByPhoneNumber(phone);
+    const firebaseUserFind = await firebaseAdmin
+      .auth()
+      .getUserByPhoneNumber(phone);
     const firebaseId = firebaseUserFind?.uid;
     if (!firebaseId) {
-      const firebaseUserCreate = await admin
+      const firebaseUserCreate = await firebaseAdmin
         .auth()
         .createUser({ phoneNumber: phone });
       logger.info(`Firebase User Created: ${firebaseId}`);
@@ -83,18 +70,16 @@ export async function createFirebaseUser(phone: string): Promise<string> {
  * @param req request object
  * @returns database user object
  */
-export async function getUserId(req: NextApiRequest) {
+export async function getUserId() {
   try {
-    const firebaseUser = await getLoggedInUser(req);
+    const firebaseUser = await getLoggedInUser();
     debug({ firebaseUser });
     const firebaseId = firebaseUser?.uid;
     if (!firebaseId) return null;
 
-    const dbUser = await getUserByFirebaseId(firebaseId);
-    debug({ dbUser });
-    const userId = dbUser?.id;
-    if (!userId) return null;
-    return userId;
+    const user = await getUserByFirebaseId(firebaseId);
+    debug({ user });
+    return user?.id || null;
   } catch (getUserIdError) {
     logger.error({ getUserIdError });
     throw getUserIdError;

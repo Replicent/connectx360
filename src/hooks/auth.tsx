@@ -1,12 +1,13 @@
 "use client";
-import { User } from "firebase/auth";
+import { getAuth, User } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { analytics, auth, isSupported, setUserId } from "../firebase/app";
-import { logOut } from "../firebase/auth";
+import { analytics, isSupported, setUserId } from "../firebase/app";
+import { logOut } from "../firebase/client";
 
 export default function useFirebaseAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {

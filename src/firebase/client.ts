@@ -1,16 +1,18 @@
 import {
   ApplicationVerifier,
   GoogleAuthProvider,
-  connectAuthEmulator,
   signInWithPhoneNumber,
   signInWithPopup,
   RecaptchaVerifier,
+  getAuth,
+  connectAuthEmulator,
 } from "firebase/auth";
-import { auth } from "@/firebase/app";
+import { createFirebaseApp } from "./app";
 
 const firebaseEmulator = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
 
-const googleProvider = new GoogleAuthProvider();
+const app = createFirebaseApp();
+const auth = getAuth(app);
 
 if (firebaseEmulator) {
   connectAuthEmulator(auth, firebaseEmulator);
@@ -29,8 +31,10 @@ async function phoneLogin(
   return await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
 }
 
+const getGoogleProvider = () => new GoogleAuthProvider();
+
 function googleLogin() {
-  return signInWithPopup(auth, googleProvider);
+  return signInWithPopup(auth, getGoogleProvider());
 }
 
 function logOut() {
