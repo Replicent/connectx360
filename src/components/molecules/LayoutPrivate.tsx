@@ -11,7 +11,7 @@ const LayoutPrivate = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!user?.phoneNumber && !userLoading) {
-      router.push("/sign-in");
+      router.push("/admin");
     } else {
       setIsLoading(false);
     }
