@@ -1,22 +1,20 @@
-import React from "react";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import LayoutPrivate from "@/components/molecules/LayoutPrivate";
+import Home from "@/components/organisms/HomePage";
 import QueryClientWrapper from "@/components/atoms/QueryClientWrapper";
-import SignInPage from "@/components/organisms/SignInPage";
 
 export const metadata: Metadata = {
-  title: "Sign In - ConnectX360",
+  title: "ConnectX360",
   description:
     "ConnectX360 is a platform for connecting people with similar interests.",
 };
 
-const SignIn = () => {
+export default function HomePage() {
   return (
-    <div>
+    <LayoutPrivate>
       <QueryClientWrapper>
-        <SignInPage />
+        <Home />
       </QueryClientWrapper>
-    </div>
+    </LayoutPrivate>
   );
-};
-
-export default SignIn;
+}

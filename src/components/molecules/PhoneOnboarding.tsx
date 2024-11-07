@@ -4,6 +4,16 @@ import { useRouter } from "next/navigation";
 import { phoneLogin, recaptchaVerifier } from "@/firebase/client";
 import { ApplicationVerifier, ConfirmationResult } from "firebase/auth";
 import useFirebaseAuth from "@/hooks/auth";
+import Button from "../atoms/Button";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "../ui/input-otp";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 
 const PhoneOnboarding = () => {
   const { user, isLoading: userLoading } = useFirebaseAuth();
@@ -20,7 +30,7 @@ const PhoneOnboarding = () => {
 
   const redirectToDashboard = () => {
     setIsLoading(true);
-    router.push("/");
+    router.push("/home");
   };
 
   useEffect(() => {
@@ -85,19 +95,23 @@ const PhoneOnboarding = () => {
 
   return (
     <div>
-      <h1>Sign In</h1>
       <span id="recaptcha-container"></span>
       {userLoading ? (
         <div>Loading...</div>
       ) : (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="py-4 flex flex-col gap-4">
           {page === 0 && (
             <div>
-              <label htmlFor="phone">Phone Number</label>
-              <input
+              <Label htmlFor="phone" className="mb-1">
+                Phone Number
+              </Label>
+              <Input
                 type="tel"
                 id="phone"
                 name="phone"
+                minLength={10}
+                pattern="[0-9]{10}"
+                maxLength={10}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value?.trim())}
                 disabled={isLoading}
@@ -106,20 +120,38 @@ const PhoneOnboarding = () => {
           )}
           {page === 1 && (
             <div>
-              <label htmlFor="otp">OTP</label>
-              <input
-                type="number"
+              <Label htmlFor="otp" className="mb-1">
+                OTP
+              </Label>
+              <InputOTP
+                maxLength={6}
                 id="otp"
                 name="otp"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value?.trim())}
+                onChange={(val) => setOtp(val)}
                 disabled={isLoading}
-              />
+                pattern={REGEXP_ONLY_DIGITS}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
             </div>
           )}
-          <button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? "Loading..." : "Next"}
-          </button>
+          </Button>
         </form>
       )}
       {error && <div>{error}</div>}

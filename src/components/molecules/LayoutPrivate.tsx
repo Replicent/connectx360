@@ -17,7 +17,7 @@ const LayoutPrivate = ({ children }: { children: ReactNode }) => {
     }
   }, [user, userLoading]);
 
-  const loading = isLoading || userLoading;
+  const loading = isLoading || userLoading || !user?.phoneNumber;
 
   return loading ? <Loader /> : <div>{children}</div>;
 };
