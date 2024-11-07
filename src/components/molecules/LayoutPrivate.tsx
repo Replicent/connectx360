@@ -11,13 +11,13 @@ const LayoutPrivate = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!user?.phoneNumber && !userLoading) {
-      router.push("/admin");
+      router.push("/sign-in");
     } else {
       setIsLoading(false);
     }
   }, [user, userLoading]);
 
-  const loading = isLoading || userLoading;
+  const loading = isLoading || userLoading || !user?.phoneNumber;
 
   return loading ? <Loader /> : <div>{children}</div>;
 };
