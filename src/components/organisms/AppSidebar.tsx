@@ -4,16 +4,21 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
+  MagicWandIcon,
   BarChartIcon,
-  EnvelopeClosedIcon,
+  LayersIcon,
   GearIcon,
+  ReaderIcon,
+  PersonIcon,
+  Component1Icon,
+  Pencil2Icon,
+  HandIcon,
 } from "@radix-ui/react-icons";
 import Button from "../atoms/Button";
 import useFirebaseAuth from "@/hooks/auth";
@@ -26,43 +31,85 @@ import {
 } from "../ui/menubar";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Label } from "../ui/label";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const items = [
+  {
+    title: "Get Started",
+    url: "/home",
+    icon: MagicWandIcon,
+  },
   {
     title: "Dashboard",
     url: "/dashboard",
     icon: BarChartIcon,
   },
   {
-    title: "Proposals",
-    url: "/proposals",
-    icon: EnvelopeClosedIcon,
+    title: "Pipeline",
+    url: "/pipeline",
+    icon: LayersIcon,
+  },
+  {
+    title: "Payments",
+    url: "/#",
+    icon: ReaderIcon,
+  },
+  {
+    title: "Clients",
+    url: "/#",
+    icon: PersonIcon,
+  },
+  {
+    title: "Services",
+    url: "/#",
+    icon: Component1Icon,
+  },
+  {
+    title: "Templates",
+    url: "/#",
+    icon: Pencil2Icon,
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/#",
     icon: GearIcon,
+  },
+  {
+    title: "Help & Support",
+    url: "/#",
+    icon: HandIcon,
   },
 ];
 
 const AppSidebar = () => {
   const { user, logOut } = useFirebaseAuth();
-
+  const pathName = usePathname();
+  const navButtonClass = (url: string) =>
+    cn(
+      "my-1 font-semibold py-[22px] hover:bg-indigo-600 hover:text-white",
+      pathName === url ? "bg-indigo-600 text-white" : ""
+    );
   return (
     <Sidebar>
-      <SidebarHeader>ConnectX360</SidebarHeader>
+      <SidebarHeader className="text-xl md:text-2xl font-bold">
+        ConnectX360
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    className={navButtonClass(item.url)}
+                  >
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
