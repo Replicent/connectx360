@@ -53,32 +53,32 @@ const items = [
   },
   {
     title: "Payments",
-    url: "/#",
+    url: "/payments",
     icon: ReaderIcon,
   },
   {
     title: "Clients",
-    url: "/#",
+    url: "/clients",
     icon: PersonIcon,
   },
   {
     title: "Services",
-    url: "/#",
+    url: "/services",
     icon: Component1Icon,
   },
   {
     title: "Templates",
-    url: "/#",
+    url: "/templates",
     icon: Pencil2Icon,
   },
   {
     title: "Settings",
-    url: "/#",
+    url: "/settings",
     icon: GearIcon,
   },
   {
     title: "Help & Support",
-    url: "/#",
+    url: "/help-and-support",
     icon: HandIcon,
   },
 ];
