@@ -1,9 +1,13 @@
 import React from "react";
 import PhoneOnboarding from "../molecules/PhoneOnboarding";
+import "../../../app/onboarding/gradient-background-styles.css";
 
 const SignInPage = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div
+      id="onboarding-background"
+      className="flex items-center justify-center min-h-screen"
+    >
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-sm w-full">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Sign In to ConnectX360

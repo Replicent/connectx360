@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import LayoutPrivate from "@/components/molecules/LayoutPrivate";
-import Home from "@/components/organisms/HomePage";
+import HelpAndSupport from "@/components/organisms/HelpAndSupport";
 
 export const metadata: Metadata = {
-  title: "ConnectX360",
+  title: "ConnectX360 - Help & Support",
   description:
     "ConnectX360 is a platform for connecting people with similar interests.",
 };
 
-export default function HomePage() {
+export default function HelpAndSupportPage() {
   return (
     <LayoutPrivate>
-      <Home />
+      <HelpAndSupport />
     </LayoutPrivate>
   );
 }

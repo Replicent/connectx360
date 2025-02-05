@@ -46,6 +46,12 @@ const PhoneOnboarding = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (otp && otp.length === 6) {
+      verifyOtp();
+    }
+  }, [otp]);
+
   const signIn = () => {
     if (!verifier) {
       return setError("Recaptcha Verifier not found");
@@ -59,7 +65,6 @@ const PhoneOnboarding = () => {
         setPage(1);
       })
       .catch((phoneError) => {
-        console.log({ phoneError });
         setError("Error signing in with phone");
       })
       .finally(() => setIsLoading(false));
@@ -76,7 +81,6 @@ const PhoneOnboarding = () => {
       ?.confirm(otp)
       .then(redirectToDashboard)
       .catch((otpError) => {
-        console.log({ otpError });
         setError("Error confirming OTP");
       })
       .finally(() => setIsLoading(false));

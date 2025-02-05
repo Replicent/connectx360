@@ -13,13 +13,171 @@ model users {
   firebaseid String     @unique
   phone      String     @unique
   role       UsersRoles
-  email      String?    @unique
-  name       String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+
+  email String? @unique
+  name  String?
+
+  super_admins super_admins?
+  admins       admins?
+  clients      clients?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model companies {
+  id                 String   @id @default(uuid())
+  super_admin_id     String   @unique
+  name               String?
+  email              String?  @unique
+  country            String?
+  timezone           String?
+  start_of_fy        String?
+  logo               String?
+  tax_included_price Boolean?
+  tax_label          String?
+  tax_rate           Float?
+
+  super_admins super_admins @relation(fields: [super_admin_id], references: [id])
+  admins       admins[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model super_admins {
+  id      String @id @default(uuid())
+  user_id String @unique
+
+  users     users       @relation(fields: [user_id], references: [id])
+  companies companies?
+  clients   clients[]
+  proposals proposals[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model admins {
+  id         String  @id @default(uuid())
+  company_id String
+  user_id    String  @unique
+  active     Boolean @default(true)
+  job_title  String?
+
+  users     users       @relation(fields: [user_id], references: [id])
+  companies companies   @relation(fields: [company_id], references: [id])
+  clients   clients[]
+  proposals proposals[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model clients {
+  id             String  @id @default(uuid())
+  name           String
+  phone          String  @unique
+  email          String? @unique
+  user_id        String? @unique
+  super_admin_id String? @unique
+  admin_id       String? @unique
+
+  users        users?        @relation(fields: [user_id], references: [id])
+  super_admins super_admins? @relation(fields: [super_admin_id], references: [id])
+  admins       admins?       @relation(fields: [admin_id], references: [id])
+  proposals    proposals[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model terms {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  service_id  String? @unique
+
+  services  services[]
+  contracts contracts?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model services {
+  id           String  @id @default(uuid())
+  name         String
+  description  String
+  price_type   String
+  price        Float
+  tax_rate     Float
+  billing_mode String
+  terms_id     String
+  contracts_id String?
+
+  terms     terms                 @relation(fields: [terms_id], references: [id])
+  contracts servicesOnContracts[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model contracts {
+  id                  String @id @default(uuid())
+  name                String
+  start               String
+  min_contract_length String
+  terms_id            String @unique
+
+  terms     terms                 @relation(fields: [terms_id], references: [id])
+  services  servicesOnContracts[]
+  proposals proposals?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model servicesOnContracts {
+  service_id  String
+  contract_id String
+
+  services  services  @relation(fields: [service_id], references: [id])
+  contracts contracts @relation(fields: [contract_id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([service_id, contract_id])
+}
+
+model proposals {
+  id             String  @id @default(uuid())
+  name           String
+  description    String
+  start          String
+  end            String
+  status         String
+  value          Float
+  viewed         Boolean @default(false)
+  sent           String?
+  reminders      String?
+  super_admin_id String?
+  admin_id       String?
+  client_id      String
+  contract_id    String? @unique
+
+  clients      clients       @relation(fields: [client_id], references: [id])
+  contracts    contracts?    @relation(fields: [contract_id], references: [id])
+  super_admins super_admins? @relation(fields: [super_admin_id], references: [id])
+  admins       admins?       @relation(fields: [admin_id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum UsersRoles {
+  SUPER_ADMIN
   ADMIN
   USER
   CLIENT
