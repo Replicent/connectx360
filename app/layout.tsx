@@ -1,13 +1,12 @@
-"use client";
 import "./globals.css";
 import localFont from "next/font/local";
-import { UserProvider } from "@/firebase/user-context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -24,9 +23,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserProvider>
-          <main>{children}</main>
-        </UserProvider>
+        <main>{children}</main>
       </body>
     </html>
   );

@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import AppSidebar from "../organisms/AppSidebar";
@@ -10,9 +9,9 @@ const LayoutSidebar = (props: { children: React.ReactNode }) => {
       <SidebarProvider>
         <AppSidebar />
         <SidebarTrigger className="m-2" />
-        <div className="flex min-h-screen bg-gray-100 w-full">
-          <main className="flex-1 p-6">{props.children}</main>
-        </div>
+        <section className="flex min-h-screen bg-gray-100 w-full p-6">
+          {props.children}
+        </section>
       </SidebarProvider>
     </QueryClientWrapper>
   );
